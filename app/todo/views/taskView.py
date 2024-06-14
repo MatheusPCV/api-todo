@@ -79,8 +79,8 @@ class TaskView(APIView):
 
             return redirect("tasks")
         else:
-            repository = Repository(collection="tasks")
-            tasks = list(repository.get_all())
+            repository = TaskRepository(collection="tasks")
+            tasks = repository.filter(username=self.user)
             serializer = TaskSerializer(tasks, many=True)
             serialized_tasks = serializer.data
 
