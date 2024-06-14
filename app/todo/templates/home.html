@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Cards</title>
+    <style>
+        /* Estilos para o cabeçalho */
+        .header {
+            background-color: #f0f0f0;
+            /* Cor de fundo suave */
+            color: #333;
+            /* Cor de texto suave */
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: -8px;
+            /* Remover margem esquerda */
+            margin-right: -8px;
+            /* Remover margem direita */
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Estilos para os cards */
+        .task-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* 3 colunas com largura igual */
+            gap: 16px;
+            /* Espaçamento entre os cards */
+            padding: 16px;
+            margin-left: auto;
+            /* Centralizar os cards */
+            margin-right: auto;
+            /* Centralizar os cards */
+        }
+
+        .task-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 150px;
+            /* Altura mínima dos cards */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .task-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .task-buttons {
+            margin-top: auto;
+            /* Alinhar com a borda inferior do card */
+            display: flex;
+            justify-content: center;
+            /* Centralizar o botão */
+        }
+
+        .task-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .task-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para o botão de logout */
+        .logout-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            /* Remover sublinhado do link */
+        }
+
+        .logout-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para o botão de criação de tarefas */
+        .create-task-button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            /* Remover sublinhado do link */
+        }
+
+        .create-task-button:hover {
+            background-color: #218838;
+        }
+
+        /* Estilos para o formulário de criação de tarefas */
+        .create-task-form {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            margin: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .create-task-form input,
+        .create-task-form textarea {
+            margin-bottom: 16px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 99%;
+            /* Defina a largura desejada */
+            resize: none;
+            /* Desativa o redimensionamento */
+        }
+
+        .create-task-form button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .create-task-form button:hover {
+            background-color: #218838;
+        }
+
+        /* Estilos para a mensagem de erro */
+        .error-message {
+            color: red;
+            margin-bottom: 16px;
+        }
+
+        /* Estilos para o botão de excluir conta */
+        .delete-account-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .delete-account-button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .delete-account-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cabeçalho -->
+    <div class="header">
+        <!-- Nome do Usuário -->
+        <div class="header-title">Bem-vindo</div>
+        <!-- Botão de Logout -->
+        <a href="/logout/" class="logout-button">Logout</a>
+    </div>
+
+    <!-- Formulário de Criação de Tarefas -->
+    <div class="create-task-container">
+        <form class="create-task-form" method="POST" action="/tasks/">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Nome da Tarefa" required>
+            <textarea name="description" placeholder="Descrição da Tarefa" required></textarea>
+            <button type="submit">Criar Tarefa</button>
+            <!-- Mensagem de erro -->
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Exibição das tarefas -->
+    <div class="task-cards">
+        {% for task in tasks %}
+        <div class="task-card">
+            <div class="task-title">{{ task.name }}</div>
+            <div class="task-description">{{ task.description }}</div>
+            <div class="task-buttons">
+                <!-- Botão de Exclusão -->
+                <form method="POST" action="/tasks/{{ task.id }}/">
+                    {% csrf_token %}
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button class="task-button" type="submit">Excluir</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="delete-account-container">
+        <form method="POST" action="/deleteaccount/">
+            {% csrf_token %}
+            <input type="hidden" name="_method" value="DELETE">
+            <button class="delete-account-button" type="submit">Excluir Conta</button>
+        </form>
+    </div>
+</body>
+
+</html>
